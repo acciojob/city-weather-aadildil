@@ -1,56 +1,61 @@
 import axios from "axios";
 import React, { useState } from "react";
-import 'regenerator-runtime/runtime';
 
 
+const APIkey = `f782af47b7a22dfdd692d43b5a6a5453`;
 
 const Search=()=>{
 
-    const [search,setSearch]=useState("")
-    const [data,setData]=useState("");
-    const [city,setCity]=useState("");
-    const APIKey = `f782af47b7a22dfdd692d43b5a6a5453`;
-
-    async function fetchData() {
-        if(!search)
-        return;
-        await axios.get(
-            `https://api.openweathermap.org/data/2.5/weather?q=${search}&appid=${APIKey}`
-          ).then(response=>{
-            setCity(search)
-            setData(response.data)
-            setSearch("")
-          })
-          .catch(error=>console.log(error))
-      }
-      function handleKey(e)
-      {
-        if(e.key==="Enter")
-        fetchData();
-      }
-
+    const [search, setSearch] = useState("");
+    const [weatherData,setWeatherData] = useState(null);
+    const [city, setCity] = useState("");
     
+
+    function fetchData(search) {
+
+        axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${search}&appid=${APIkey}`).then((response) => {
+           setWeatherData(response.data);
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+
+
+    function handleInput(event) {
+        setSearch(event.target.value);
+    }
+
+    function handleForm(event) {
+        event.preventDefault();
+
+        if (search !== "") {
+            fetchData(search);
+        }
+        setCity(search);
+        setSearch("");
+    }
+
+   
+
 
     return (
         <div>
-            <div className="search-container">
-            <input className="search" value={search} placeholder="search city" onKeyDown={handleKey} onChange={(e)=>{
-                setSearch(e.target.value)
-            }} />
-           
+            <form onSubmit={handleForm}>
+                <input type="text" className="search" value={search} onChange={handleInput} />
+            </form>
 
-            </div>
-            {data &&
-                 <div className="weather">
-                 <h1>{city}</h1>
-                 <h1>{(data.main.temp-273).toFixed(2)} °C</h1>
-                 <p>{data.weather[0].description}</p>
-                <img src={`https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`}/>
- 
-             </div>
+            {
+               weatherData !== null && <div className="weather">
+                    <h2>{city}</h2>
+                    <h2>{Math.floor(((weatherData.main.temp-273)*9/5) + 32)}°F</h2>
+                    <p>{weatherData.weather[0].description}</p>
+                    <img src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}/>
+                </div>
             }
-           
+
         </div>
+
     )
+    
 }
 export default Search;
