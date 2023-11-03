@@ -11,10 +11,12 @@ const Search=()=>{
     const APIKey = `f782af47b7a22dfdd692d43b5a6a5453`;
 
     async function fetchData() {
+        if(!city)
+        return;
         await axios.get(
             `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APIKey}`
           ).then(response=>{
-            console.log(response.data)
+            
             setSearchItem(response.data)
           })
           .catch(error=>console.log(error))
