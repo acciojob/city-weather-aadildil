@@ -7,7 +7,7 @@ import 'regenerator-runtime/runtime';
 const Search=()=>{
 
     const [searchItem,setSearchItem]=useState("");
-    const [city,setCity]=useState("kanpur");
+    const [city,setCity]=useState("");
     const APIKey = `f782af47b7a22dfdd692d43b5a6a5453`;
 
     async function fetchData() {
@@ -19,14 +19,18 @@ const Search=()=>{
           })
           .catch(error=>console.log(error))
       }
-      
+      function handleKey(e)
+      {
+        if(e.key==="Enter")
+        fetchData();
+      }
 
     
 
     return (
         <div>
             <div className="search-container">
-            <input className="search" placeholder="search city" onChange={(e)=>{
+            <input className="search" placeholder="search city" onKeyDown={handleKey} onChange={(e)=>{
                 setCity(e.target.value)
             }} />
             <button onClick={fetchData}>add</button>
